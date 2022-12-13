@@ -7,10 +7,10 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 
 //import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.8.0/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
-contract GameToken is ERC20, ownable {
+contract GameToken is ERC20, Ownable {
     uint public initialSupply;
-    address payable owner = payable(msg.sender);
-    uint public totalSupply;
+    //address payable owner = payable(msg.sender);
+    uint public tokenSupply;
     mapping(address => uint) balances;
 
     // inherit all functionality from the ERC20 base contract
@@ -18,18 +18,18 @@ contract GameToken is ERC20, ownable {
         // call the internal _mint function, taking 2 parameters
         // the totalSupply from our constructor will fill the amount
         // msg.sender will receive the tokens
-        _mint(owner, _initialSupply * (10 ** decimals()));
+        _mint(msg.sender, _initialSupply * (10 ** decimals()));
         initialSupply = _initialSupply * (10 ** decimals());
-        totalSupply += initialSupply; //update the total supply
-        balances[owner] = _initialSupply; //update the balances
+        tokenSupply += initialSupply; //update the total supply
+        balances[msg.sender] = _initialSupply; //update the balances
     }
 
     // a mint function
     // only the owner can call
     // mint to an address
     function mint(address _to, uint _amount) public onlyOwner {
-        payable(_to).transfer(_amount);
-        totalSupply += _amount; //update the total supply
+        _mint(_to, _amount * (10 ** decimals())); //calls the internal mint function
+        tokenSupply += _amount; //update the total supply
         balances[_to] += _amount; // update the balances mapping
     }
 }
